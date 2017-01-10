@@ -1,0 +1,48 @@
+{-# language PackageImports #-}
+module Lib where
+
+import "fgl" Data.Graph.Inductive
+import qualified Data.IntMap as IM
+import qualified "mwc-probability" System.Random.MWC.Probability as P
+
+import Control.Monad.Primitive
+import Control.Monad.State.Strict
+
+import System.Random
+
+{-- |
+* Start and end at node 0
+* Maximize tour profit (sum of node values)
+* Edge costs represent travel times (constraint on max.travel time)
+--}
+
+
+
+
+-- * Solvers
+
+{-- | Randomized Heuristic 1
+1) Start from node 1 -> i : cost = 0, value = 0
+2) pick random node in neighborhood -> i'
+** value = value + value(i')
+** cost = cost + cost(i, i')
+** remove current node i from future neighbors list
+** GOTO 2)
+--}
+
+
+
+
+
+
+
+-- * Datasets
+
+-- | Easy instance: 6 nodes. Max. cost = 2 hours (= 120)
+dataEasy :: Gr Int Int
+dataEasy = mkGraph (zip [1..6] [0,13,12,19,16,15]) edgeCosts where
+  edgeCosts = [(1,2,25),(1,3,32),(1,4,43),(1,5,35),(1,6,21),(2,3,23),(2,4,28),(2,5,41),(2,6,24),(3,4,16),(3,5,24),(3,6,36),(4,5,13),(4,6,34),(5,6,27)]
+
+
+
+

@@ -1,2 +1,5 @@
 # vrp
-Experiments on the Vehicle Routing Problem in Haskell
+
+[![Build Status](https://travis-ci.org/ocramz/vrp.png)](https://travis-ci.org/ocramz/vrp)
+
+TODO Description.
