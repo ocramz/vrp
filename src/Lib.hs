@@ -20,6 +20,29 @@ import Control.Monad.Trans.Class (lift)
 
 
 
+data St r = St { reward :: r}
+
+
+data MDP m s r t =
+  MDP {
+    futureStates :: s -> [s]
+  , actionChoice :: [s] -> P.Prob m s
+  , evalState :: s -> r       -- ^ given current state, return value
+  , evalTrans :: s -> Maybe t -- ^ given a future state, return cost of transition
+  -- , state :: s
+  -- , rewardTot :: r
+  -- , constraintTot :: t
+        }
+
+-- updateAgent gr = do
+--   (Agent s r) <- get         -- current state
+--   let ss' = G.neighbors gr s -- available actions
+  
+  -- put $ Agent s' 
+
+-- evalState = G.lab
+-- evalFutureStates gr i 
+
 
 -- * Solvers
 
@@ -66,12 +89,26 @@ pickNeighborNode gr i =
 
 
 
+{-- fgl queries:
+lab : node label
+neighbors : neighboring nodes
+
+lneighbors : edges (label, second node)
+out : edges (this node, second node, label)
+
+--}
+
+
+
+
+
 -- * Datasets
 
 -- | Easy instance: 6 nodes. Max. cost = 2 hours (= 120)
-dataEasy :: G.Gr Int Int
-dataEasy = G.mkGraph (zip [1..6] [0,13,12,19,16,15]) edgeCosts where
+g0 :: G.Gr (St Int) Int
+g0 = G.mkGraph (zip [1..6] nodeLabels) edgeCosts where
   edgeCosts = [(1,2,25),(1,3,32),(1,4,43),(1,5,35),(1,6,21),(2,3,23),(2,4,28),(2,5,41),(2,6,24),(3,4,16),(3,5,24),(3,6,36),(4,5,13),(4,6,34),(5,6,27)]
+  nodeLabels = [St 0, St 13, St 12, St 19, St 16, St 15]
 
 
 
