@@ -1,14 +1,14 @@
 {-# language PackageImports #-}
 module Lib where
 
-import "fgl" Data.Graph.Inductive
+import qualified "fgl" Data.Graph.Inductive as G
 import qualified Data.IntMap as IM
 import qualified "mwc-probability" System.Random.MWC.Probability as P
 
 import Control.Monad.Primitive
 import Control.Monad.State.Strict
 
-import System.Random
+-- import System.Random
 
 {-- |
 * Start and end at node 0
@@ -31,6 +31,12 @@ import System.Random
 --}
 
 
+-- NB : we must track provenance: what node are we arriving from?
+
+
+pickNeighborNode :: (PrimMonad m, G.Graph gr) => gr a b -> G.Node -> P.Prob m G.Node
+pickNeighborNode gr i = 
+  P.discreteUniform (G.neighbors gr i)
 
 
 
@@ -39,10 +45,27 @@ import System.Random
 -- * Datasets
 
 -- | Easy instance: 6 nodes. Max. cost = 2 hours (= 120)
-dataEasy :: Gr Int Int
-dataEasy = mkGraph (zip [1..6] [0,13,12,19,16,15]) edgeCosts where
+dataEasy :: G.Gr Int Int
+dataEasy = G.mkGraph (zip [1..6] [0,13,12,19,16,15]) edgeCosts where
   edgeCosts = [(1,2,25),(1,3,32),(1,4,43),(1,5,35),(1,6,21),(2,3,23),(2,4,28),(2,5,41),(2,6,24),(3,4,16),(3,5,24),(3,6,36),(4,5,13),(4,6,34),(5,6,27)]
 
 
 
 
+
+
+-- * Utils
+
+withIOGen :: (P.Gen RealWorld -> IO a) -> IO a
+withIOGen = P.withSystemRandom . P.asGenIO
+
+
+
+-- misc
+
+rands :: PrimMonad m => P.Gen (PrimState m) -> (Int, Int) -> Int -> m [Int]
+rands g (n1,n2) m = 
+  replicateM m $ P.sample (P.discreteUniform [n1..n2]) g
+
+rands' g (n1,n2) m = 
+  replicateM m  (P.discreteUniform [n1..n2])
