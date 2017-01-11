@@ -5,8 +5,10 @@ import qualified "fgl" Data.Graph.Inductive as G
 import qualified Data.IntMap as IM
 import qualified "mwc-probability" System.Random.MWC.Probability as P
 
+import Control.Monad
 import Control.Monad.Primitive
-import Control.Monad.State.Strict
+import Control.Monad.Trans.State.Strict
+import Control.Monad.Trans.Class (lift)
 
 -- import System.Random
 
@@ -33,6 +35,26 @@ import Control.Monad.State.Strict
 
 -- NB : we must track provenance: what node are we arriving from?
 
+sampleTransition
+  :: Monad m =>
+     P.Prob m a1
+     -> (a -> a1 -> a) -> P.Gen (PrimState m) -> StateT a m ()
+sampleTransition prob f gen = do
+  x <- get
+  w <- lift $ P.sample prob gen
+  let z = f x w
+  put z
+  -- return z
+
+sampleGraphTransition1
+  :: (PrimMonad m, G.Graph gr) =>
+     gr a1 b
+     -> G.Node
+     -> (a -> G.Node -> a)
+     -> P.Gen (PrimState m)
+     -> StateT a m ()
+sampleGraphTransition1 gr i =
+  sampleTransition (P.discreteUniform $ G.neighbors gr i)
 
 pickNeighborNode :: (PrimMonad m, G.Graph gr) => gr a b -> G.Node -> P.Prob m G.Node
 pickNeighborNode gr i = 
