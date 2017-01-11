@@ -56,6 +56,8 @@ sampleGraphTransition1
 sampleGraphTransition1 gr i =
   sampleTransition (P.discreteUniform $ G.neighbors gr i)
 
+
+
 pickNeighborNode :: (PrimMonad m, G.Graph gr) => gr a b -> G.Node -> P.Prob m G.Node
 pickNeighborNode gr i = 
   P.discreteUniform (G.neighbors gr i)
